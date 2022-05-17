@@ -1,0 +1,39 @@
+{
+  "name": "js_power_keys-server",
+  "version": "0.1.0",
+  "description": "backend for game prices app",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  },
+  "nodemonConfig": {
+    "ignore": [],
+    "watch": [
+      "./index.js"
+    ],
+    "delay": 0,
+    "ext": "js,json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altsep/js_power_keys-server.git"
+  },
+  "author": "leshka <mx24xnpi4@mozmail.com> (https://github.com/altsep)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/altsep/js_power_keys-server/issues"
+  },
+  "homepage": "https://github.com/altsep/js_power_keys-server#readme",
+  "private": true
+}
