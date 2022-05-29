@@ -72,26 +72,26 @@ app.get('/api/steamapps', (req, res, next) => {
 //   });
 // });
 
-const getSteamApps = async () => {
-  try {
-    const url = 'http://api.steampowered.com/ISteamApps/GetAppList/v2/';
-    const { data } = await axios.get(url);
-    let writeStream = fs.createWriteStream('steamapps');
-    writeStream.write(JSON.stringify(data.applist));
-    writeStream.end();
-  } catch (err) {
-    if (err) console.log(err);
-  }
-};
+// const getSteamApps = async () => {
+//   try {
+//     const url = 'http://api.steampowered.com/ISteamApps/GetAppList/v2/';
+//     const { data } = await axios.get(url);
+//     let writeStream = fs.createWriteStream('steamapps');
+//     writeStream.write(JSON.stringify(data.applist));
+//     writeStream.end();
+//   } catch (err) {
+//     if (err) console.log(err);
+//   }
+// };
 
-/* Get steam appid and name list on script load */
-getSteamApps();
+// /* Get steam appid and name list on script load */
+// getSteamApps();
 
-const msInADay = 86400000;
+// const msInADay = 86400000;
 
-setInterval(() => {
-  getSteamApps();
-}, msInADay);
+// setInterval(() => {
+//   getSteamApps();
+// }, msInADay);
 
 app.get('/api/gogproducts/:name', async (req, res, next) => {
   const { name } = req.params;
