@@ -51,35 +51,37 @@ app.get('/api/steamapps', (req, res, next) => {
   fs.readFile('steamapps', 'utf8', (err, data) => {
     if (err) {
       next(err);
+      res.status(500).send({ error: err.toString() });
     } else {
       res.send(data);
     }
   });
 });
 
-app.get('/api/steamapps/:name', (req, res, next) => {
-  const { name } = req.params;
-  fs.readFile('steamapps', 'base64', (err, data) => {
-    if (err) {
-      next(err);
-    } else {
-      const apps = JSON.parse(data)
-        .filter((a) => a.name.toLowerCase().includes(name.toLowerCase()))
-        .sort((a, b) => a.name.localeCompare(b.name));
-      apps.length > 1 ? res.send(apps) : res.send(apps[0]);
-    }
-  });
-});
+// app.get('/api/steamapps/:name', (req, res, next) => {
+//   const { name } = req.params;
+//   fs.readFile('steamapps', 'base64', (err, data) => {
+//     if (err) {
+//       next(err);
+//     } else {
+//       const apps = JSON.parse(data)
+//         .filter((a) => a.name.toLowerCase().includes(name.toLowerCase()))
+//         .sort((a, b) => a.name.localeCompare(b.name));
+//       apps.length > 1 ? res.send(apps) : res.send(apps[0]);
+//     }
+//   });
+// });
 
-const getSteamApps = () => {
-  const url = 'http://api.steampowered.com/ISteamApps/GetAppList/v2/';
-  axios.get(url).then(({ data }) => {
-    if (data) {
-      let writeStream = fs.createWriteStream('steamapps');
-      writeStream.write(JSON.stringify(data.applist));
-      writeStream.end();
-    }
-  });
+const getSteamApps = async () => {
+  try {
+    const url = 'http://api.steampowered.com/ISteamApps/GetAppList/v2/';
+    const { data } = await axios.get(url);
+    let writeStream = fs.createWriteStream('steamapps');
+    writeStream.write(JSON.stringify(data.applist));
+    writeStream.end();
+  } catch (err) {
+    if (err) console.log(err);
+  }
 };
 
 /* Get steam appid and name list on script load */
@@ -119,9 +121,14 @@ function getRegion(req) {
   const geo = geoip.lookup(req.ip);
   const lang = req.headers['accept-language'].split(',')[0];
   const region =
-  (geo && geo.country) || lang.split('-').length === 1
-  ? lang
-  : lang.split('-')[1];
-  console.log('ip: ' + req.ip, 'geo: ' + geo, 'lang: ' + lang, 'region: ' + region);
+    (geo && geo.country) || lang.split('-').length === 1
+      ? lang
+      : lang.split('-')[1];
+  console.log(
+    'ip: ' + req.ip,
+    'geo: ' + geo,
+    'lang: ' + lang,
+    'region: ' + region
+  );
   return region;
 }
