@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "geoip-lite": "^1.4.5"
   },
   "devDependencies": {
+    "eslint": "^8.16.0",
     "nodemon": "^2.0.16"
   },
   "nodemonConfig": {
