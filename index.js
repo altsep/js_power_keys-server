@@ -119,8 +119,9 @@ function getRegion(req) {
   const geo = geoip.lookup(req.ip);
   const lang = req.headers['accept-language'].split(',')[0];
   const region =
-    (geo && geo.country) || lang.split('-').length === 1
-      ? lang
-      : lang.split('-')[1];
+  (geo && geo.country) || lang.split('-').length === 1
+  ? lang
+  : lang.split('-')[1];
+  console.log('ip: ' + req.ip, 'geo: ' + geo, 'lang: ' + lang, 'region: ' + region);
   return region;
 }
