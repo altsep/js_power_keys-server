@@ -83,7 +83,7 @@ const getSteamApps = () => {
 };
 
 /* Get steam appid and name list on script load */
-// getSteamApps();
+getSteamApps();
 
 const msInADay = 86400000;
 
