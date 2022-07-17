@@ -63,7 +63,16 @@ app.get('/api/gogproducts/:name', async (req, res, next) => {
   const url = new URL('products?search=' + name, API);
   try {
     const { data } = await axios.get(url.href);
-    const nameHtml = name.replace("'", '&#39;');
+    const symbols = ["'", '&'];
+    const entities = {
+      "'": '&#39;',
+      '&': '&amp;',
+    };
+    const nameHtml = name.replace(
+      new RegExp(symbols.join('|'), 'g'),
+      (match) => entities[match]
+    );
+    console.log(nameHtml);
     const regex = new RegExp(
       `<a href="/product/\\d+" class="[a-z]+">(\n|\\s)+${nameHtml}.*(\n|\\s)+</a>`,
       'ig'
@@ -71,18 +80,16 @@ app.get('/api/gogproducts/:name', async (req, res, next) => {
     const parsed = data.match(regex);
     console.log(parsed);
     if (!parsed) {
-      throw new Error('Not found');
+      throw new Error();
     }
     const items = parsed.map((item) => ({
       id: item.match(/(?<=\/product\/)\d+/)[0],
-      name: item
-        .match(new RegExp(`(?<=\n\\s+)${nameHtml}.*`, 'i'))[0]
-        .replace('&#39;', "'"),
+      name: item.match(new RegExp(`(?<=\n\\s+)${nameHtml}.*`, 'i'))[0],
     }));
     console.log(items);
     res.send(items);
   } catch (err) {
-    res.status(404).send({ message: err, serviceName: 'gog' });
+    res.status(404).send({ serviceName: 'gog' });
     next(err);
   }
 });
