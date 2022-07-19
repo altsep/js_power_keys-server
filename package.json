@@ -17,8 +17,8 @@
     "geoip-lite": "^1.4.5"
   },
   "devDependencies": {
-    "eslint": "^8.16.0",
-    "nodemon": "^2.0.16"
+    "eslint": "^8.20.0",
+    "nodemon": "^2.0.19"
   },
   "nodemonConfig": {
     "ignore": [],
