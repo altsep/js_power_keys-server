@@ -14,6 +14,7 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
     const {
       name,
       steam_appid,
+      header_image: headerImg,
       is_free,
       price_overview,
       release_date: { coming_soon, date },
@@ -28,6 +29,7 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
       productUrl: `https://store.steampowered.com/app/${steam_appid}/`,
       status: is_free ? 'free' : coming_soon && 'coming soon',
       releaseDate: formatDate(date, locale),
+      headerImg,
     };
     if (price_overview) {
       const {
@@ -42,6 +44,7 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
       };
       Object.assign(result, price);
     }
+    console.log('requested steam item');
     res.send(result);
   } catch (err) {
     if (err.response) {
