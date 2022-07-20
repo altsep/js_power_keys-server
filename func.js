@@ -1,9 +1,12 @@
 const geoip = require('geoip-lite');
 
 function formatDate(date, locale) {
-  return new Date(date).toLocaleString(locale, {
-    dateStyle: 'medium',
-  });
+  const formatted = new Date(date);
+  return formatted.toString() !== 'Invalid Date' &&
+    formatted.toLocaleString(locale, {
+      dateStyle: 'medium',
+    }
+  );
 }
 
 function getRegion(req) {
