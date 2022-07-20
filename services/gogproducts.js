@@ -27,6 +27,7 @@ app.get('/api/gogproducts/:name', async (req, res, next) => {
       id: item.match(/(?<=\/product\/)\d+/)[0],
       name: item.match(new RegExp(`(?<=\n\\s+)${nameHtml}.*`, 'i'))[0],
     }));
+    console.log('requested gog products');
     res.send(items);
   } catch (err) {
     res.status(404).send({ serviceName: 'gog' });

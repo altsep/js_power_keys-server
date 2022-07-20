@@ -17,6 +17,7 @@ app.get('/api/steamproducts/:name', async (req, res, next) => {
       id: item.match(/\d+/)[0],
       productUrl: item.split(/(?=\/\?)/)[0],
     }));
+    console.log('requested steam products');
     res.send(items);
   } catch (err) {
     if (err) {
