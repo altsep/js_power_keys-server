@@ -3,7 +3,7 @@ const { getRegion } = require('../func.js');
 
 app.get('/api/epicitem/:id', async (req, res, next) => {
   const { id } = req.params;
-  const { lang, region, locale } = getRegion(req);
+  const { region, locale } = getRegion(req);
   const baseUrl = 'https://epicgames-db.info/';
   const url = new URL('en-US/p/' + id, baseUrl);
   try {
@@ -20,14 +20,18 @@ app.get('/api/epicitem/:id', async (req, res, next) => {
       'i'
     );
     const priceParsed = data.match(priceRegex)[0];
-    const slicePrice = (price) => price.replace(',', '.').replace(/\.00/, '');
+    const slicePrice = (price) =>
+      price
+        .replace(/[.,]0+(?=\s)/, '')
+        .replace(/,/g, '.')
+        .replace(/\.(?=\d{3})/, '');
     const result = {
       name: titleParsed,
       productUrl: `https://store.epicgames.com/${locale}/p/${id}`,
       headerImg: imgParsed,
       // currencyCode,
       // basePrice,
-      finalPrice: slicePrice(priceParsed),
+      finalPrice: priceParsed.match(/\d/)[0] === '0' ? false : slicePrice(priceParsed),
     };
     res.send(result);
   } catch (err) {
