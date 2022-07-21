@@ -3,7 +3,7 @@ const { getRegion, formatDate } = require('../func.js');
 
 app.get('/api/gogitem/:id', async (req, res, next) => {
   const { id } = req.params;
-  const { region, locale } = getRegion(req);
+  const { lang, region, locale } = getRegion(req);
   try {
     console.log('requesting gog item');
     const item = await axios.get(`https://api.gog.com/v2/games/${id}`);
@@ -41,7 +41,7 @@ app.get('/api/gogitem/:id', async (req, res, next) => {
       currencyCode,
       basePrice: slicePrice(basePrice),
       finalPrice: slicePrice(finalPrice),
-      productUrl,
+      productUrl: productUrl.replace('en', lang),
       status: basePrice[0] === '0' ? 'free' : inDevelopment && 'coming soon',
       releaseDate: gogReleaseDate
         ? formatDate(gogReleaseDate, locale)
