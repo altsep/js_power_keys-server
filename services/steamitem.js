@@ -6,6 +6,7 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
   const { lang, region, locale } = getRegion(req);
   const url = `https://store.steampowered.com/api/appdetails?appids=${id}&cc=${region}&l=${lang}`;
   try {
+    console.log('requesting steam item');
     const { data } = await axios.get(url);
     const exists = data[id].success;
     if (!exists) {
@@ -44,7 +45,6 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
       };
       Object.assign(result, price);
     }
-    console.log('requested steam item');
     res.send(result);
   } catch (err) {
     if (err.response) {

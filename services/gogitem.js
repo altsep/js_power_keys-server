@@ -5,6 +5,7 @@ app.get('/api/gogitem/:id', async (req, res, next) => {
   const { id } = req.params;
   const { region, locale } = getRegion(req);
   try {
+    console.log('requesting gog item');
     const item = await axios.get(`https://api.gog.com/v2/games/${id}`);
     const {
       inDevelopment: { active: inDevelopment },
@@ -35,7 +36,6 @@ app.get('/api/gogitem/:id', async (req, res, next) => {
         .split(/\s(?=[a-z])/i)[0]
         .replace(/(?=\d{2}$)/, '.')
         .replace(/\.00$/, '');
-        console.log('requested gog item');
     res.send({
       name,
       currencyCode,
