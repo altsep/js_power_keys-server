@@ -1,5 +1,13 @@
 const geoip = require('geoip-lite');
 
+function formatCurrency(amount, locale, currencyCode) {
+  const options = currencyCode && {
+    style: 'currency',
+    currency: currencyCode,
+  };
+  return amount.toLocaleString(locale, options).replace(/[,.]0+(?=$|\s)/, '');
+}
+
 function formatDate(date, locale) {
   const formatted = new Date(date);
   return date.length === 4
@@ -25,4 +33,4 @@ function getRegion(req) {
   return { locale, region, lang };
 }
 
-module.exports = { getRegion, formatDate };
+module.exports = { getRegion, formatDate, formatCurrency };

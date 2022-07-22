@@ -1,5 +1,5 @@
 const { app, axios } = require('../app.js');
-const { getRegion, formatDate } = require('../func.js');
+const { getRegion, formatDate, formatCurrency } = require('../func.js');
 
 app.get('/api/gogitem/:id', async (req, res, next) => {
   const { id } = req.params;
@@ -32,22 +32,31 @@ app.get('/api/gogitem/:id', async (req, res, next) => {
       finalPrice,
     } = prices.data._embedded.prices[0];
     const slicePrice = (price) =>
-      price
-        .split(/\s(?=[a-z])/i)[0]
-        .replace(/(?=\d{2}$)/, '.')
-        .replace(/\.00$/, '');
-    res.send({
+      Number(
+        price
+          .split(/\s(?=[a-z])/i)[0]
+          .replace(/(?=\d{2}$)/, '.')
+          .replace(/\.00$/, '')
+      );
+    const result = {
       name,
-      currencyCode,
       basePrice: slicePrice(basePrice),
       finalPrice: slicePrice(finalPrice),
+      formattedBasePrice: formatCurrency(slicePrice(basePrice), locale),
+      formattedPrice: formatCurrency(
+        slicePrice(finalPrice),
+        locale,
+        currencyCode
+      ),
       productUrl: productUrl.replace('en', lang),
       status: basePrice[0] === '0' ? 'free' : inDevelopment && 'coming soon',
       releaseDate: gogReleaseDate
         ? formatDate(gogReleaseDate, locale)
         : formatDate(globalReleaseDate, locale),
       headerImg: img.replace('{formatter}', formatters[4]),
-    });
+    };
+    console.log(result);
+    res.send(result);
   } catch (err) {
     if (err.response) {
       const { data, status } = err.response;

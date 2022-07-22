@@ -1,5 +1,5 @@
 const { app, axios } = require('../app.js');
-const { getRegion } = require('../func.js');
+const { getRegion, formatCurrency } = require('../func.js');
 
 app.get('/api/epicitem/:id', async (req, res, next) => {
   const { id } = req.params;
@@ -15,23 +15,32 @@ app.get('/api/epicitem/:id', async (req, res, next) => {
       'https://epicgames-db.info/storage/thumbnails/.+(?=" />)'
     );
     const imgParsed = data.match(imgRegex)[0];
-    const priceRegex = new RegExp(
-      `(?<=${region}.png(.+[\n\r]){3}.+>).+(?=</td>)`,
-      'i'
+    const pricesRegex = new RegExp(
+      `(?<=\\w{2}.png(.+[\n\r]){3}.+>).+(?=</td>)`,
+      'ig'
     );
-    const priceParsed = data.match(priceRegex)[0];
+    const regionsRegex = new RegExp(`(?<=16x16/)\\w{2}(?=.png)`, 'ig');
+    const regionsParsed = data.match(regionsRegex);
+    const pricesParsed = data.match(pricesRegex);
+    const pricesEntries = regionsParsed.map((region, i) => [
+      region,
+      pricesParsed[i],
+    ]);
+    const prices = Object.fromEntries(pricesEntries);
     const slicePrice = (price) =>
-      price
-        .replace(/[.,]0+(?=\s)/, '')
-        .replace(/,/g, '.')
-        .replace(/\.(?=\d{3})/, '');
+      Number(price.replace(/[.,]0+(?=\s)/, '').replace(/\D/g, ''));
+    const price = prices[region.toLowerCase()] || prices['us'];
+    const [currencySymbol, currencySymbolIndex] = price.match(/^\D|\s?\D$/);
     const result = {
       name: titleParsed,
       productUrl: `https://store.epicgames.com/${locale}/p/${id}`,
       headerImg: imgParsed,
-      // currencyCode,
-      // basePrice,
-      finalPrice: priceParsed.match(/\d/)[0] === '0' ? false : slicePrice(priceParsed),
+      formattedPrice:
+        price.match(/\d/)[0] === '0'
+          ? false
+          : currencySymbolIndex === 0
+          ? currencySymbol + formatCurrency(slicePrice(price), locale)
+          : formatCurrency(slicePrice(price), locale) + currencySymbol,
     };
     res.send(result);
   } catch (err) {

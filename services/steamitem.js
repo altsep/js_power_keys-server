@@ -1,5 +1,5 @@
 const { app, axios } = require('../app.js');
-const { getRegion, formatDate } = require('../func.js');
+const { getRegion, formatDate, formatCurrency } = require('../func.js');
 
 app.get('/api/steamitem/:id', async (req, res, next) => {
   const { id } = req.params;
@@ -10,7 +10,7 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
     const { data } = await axios.get(url);
     const exists = data[id].success;
     if (!exists) {
-      throw new Error();
+      throw new Error('The item might be unavailable in your region');
     }
     const {
       name,
@@ -24,7 +24,7 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
       price
         .toString()
         .replace(/(?=\d{2}$)/, '.')
-        .replace(/\.00$/, '');
+        .replace(/\.00$/, '') << 0;
     const result = {
       name,
       productUrl: `https://store.steampowered.com/app/${steam_appid}/`,
@@ -42,16 +42,27 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
         currencyCode,
         basePrice: slicePrice(basePrice),
         finalPrice: slicePrice(finalPrice),
+        formattedBasePrice: formatCurrency(slicePrice(basePrice), locale),
+        formattedPrice: formatCurrency(
+          slicePrice(finalPrice),
+          locale,
+          currencyCode
+        ),
       };
       Object.assign(result, price);
     }
+    console.log(result);
     res.send(result);
   } catch (err) {
     if (err.response) {
       const { data, status } = err.response;
       const { message } = data;
       res.status(status).send({ message });
-    } else res.status(404).send();
+    } else {
+      res.status(404).send({
+        message: err.message,
+      });
+    }
     next(err);
   }
 });
