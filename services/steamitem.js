@@ -24,7 +24,7 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
     const result = {
       name,
       productUrl: `https://store.steampowered.com/app/${steam_appid}/`,
-      status: is_free ? 'free' : coming_soon && 'coming soon',
+      status: coming_soon ? 'coming soon' : is_free && 'free',
       releaseDate: formatDate(date, locale),
       headerImg,
     };
