@@ -26,7 +26,7 @@ app.get('/api/gogproducts/:term', async (req, res, next) => {
     }
     const items = parsed.map((item) => ({
       id: item.match(/(?<=\/product\/)\d+/)[0],
-      title: item.match(new RegExp(`(?<=\n\\s+)${nameHtml}.*`, 'i'))[0],
+      name: item.match(new RegExp(`(?<=\n\\s+)${nameHtml}.*`, 'i'))[0],
     }));
     res.send(items);
   } catch (err) {
