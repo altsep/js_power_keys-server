@@ -31,13 +31,7 @@ app.get('/api/gogitem/:id', async (req, res, next) => {
       basePrice,
       finalPrice,
     } = prices.data._embedded.prices[0];
-    const slicePrice = (price) =>
-      Number(
-        price
-          .split(/\s(?=[a-z])/i)[0]
-          .replace(/(?=\d{2}$)/, '.')
-          .replace(/\.00$/, '')
-      );
+    const slicePrice = (price) => +price.split(/\s(?=[a-z])/i)[0] / 100;
     const result = {
       name,
       basePrice: slicePrice(basePrice),
@@ -55,7 +49,6 @@ app.get('/api/gogitem/:id', async (req, res, next) => {
         : formatDate(globalReleaseDate, locale),
       headerImg: img.replace('{formatter}', formatters[4]),
     };
-    console.log(result);
     res.send(result);
   } catch (err) {
     if (err.response) {

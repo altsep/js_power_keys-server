@@ -20,11 +20,7 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
       price_overview,
       release_date: { coming_soon, date },
     } = data[id].data;
-    const slicePrice = (price) =>
-      price
-        .toString()
-        .replace(/(?=\d{2}$)/, '.')
-        .replace(/\.00$/, '') << 0;
+    const slicePrice = (price) => price / 100;
     const result = {
       name,
       productUrl: `https://store.steampowered.com/app/${steam_appid}/`,
@@ -38,6 +34,7 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
         initial: basePrice,
         final: finalPrice,
       } = price_overview;
+      console.log(finalPrice);
       const price = {
         currencyCode,
         basePrice: slicePrice(basePrice),
@@ -51,7 +48,6 @@ app.get('/api/steamitem/:id', async (req, res, next) => {
       };
       Object.assign(result, price);
     }
-    console.log(result);
     res.send(result);
   } catch (err) {
     if (err.response) {

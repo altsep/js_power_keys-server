@@ -27,10 +27,12 @@ app.get('/api/epicitem/:id', async (req, res, next) => {
       pricesParsed[i],
     ]);
     const prices = Object.fromEntries(pricesEntries);
-    const slicePrice = (price) =>
-      Number(price.replace(/[.,]0+(?=\s)/, '').replace(/\D/g, ''));
+    const slicePrice = (price) => +price.replace(/\D/g, '') / 100;
     const price = prices[region.toLowerCase()] || prices['us'];
-    const [currencySymbol, currencySymbolIndex] = price.match(/^\D|\s?\D$/);
+    const { 0: currencySymbol, index: currencySymbolIndex } =
+      price.match(/^\D|\s?\D$/);
+    const attachSymbol = (index, symbol, value) =>
+      index === 0 ? symbol + value : value + symbol;
     const result = {
       name: titleParsed,
       productUrl: `https://store.epicgames.com/${locale}/p/${id}`,
@@ -38,9 +40,11 @@ app.get('/api/epicitem/:id', async (req, res, next) => {
       formattedPrice:
         price.match(/\d/)[0] === '0'
           ? false
-          : currencySymbolIndex === 0
-          ? currencySymbol + formatCurrency(slicePrice(price), locale)
-          : formatCurrency(slicePrice(price), locale) + currencySymbol,
+          : attachSymbol(
+              currencySymbolIndex,
+              currencySymbol,
+              formatCurrency(slicePrice(price), locale)
+            ),
     };
     res.send(result);
   } catch (err) {
